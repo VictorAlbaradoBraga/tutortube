@@ -1,12 +1,12 @@
-# backend/app/config.py
-
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# backend/app → backend/
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_PATH = BASE_DIR / ".env"
 
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
-DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")  # exemplo
+load_dotenv(ENV_PATH)
 
-# Você pode adicionar mais configs depois, tipo:
-# YOUTUBE_API_KEY, CHROMA_DB_PATH, etc.
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
