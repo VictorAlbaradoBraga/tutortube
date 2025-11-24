@@ -6,14 +6,14 @@ from typing import List, Optional
 
 class StartStudyResponse(BaseModel):
     topic: str
-    status: str   # "processing", "done", etc.
+    status: str   
     message: str
 
 
 class RagSource(BaseModel):
     id: str
     score: float
-    snippet: str
+    preview: str               
     metadata: Optional[dict] = None
 
 

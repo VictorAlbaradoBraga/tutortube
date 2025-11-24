@@ -4,8 +4,13 @@ import chromadb
 from typing import List, Dict, Optional
 
 # Cliente Chroma em memória
-# (Se quiser tornar persistente depois: chromadb.PersistentClient(path="./chroma_db"))
 client = chromadb.Client()
+
+# Em dev, garantir que não fique collection velha com dimensão antiga
+try:
+    client.delete_collection("tutortube")
+except Exception:
+    pass
 
 # Cria/obtém coleção
 collection = client.get_or_create_collection(
@@ -21,7 +26,8 @@ def add_documents(
     ids: Optional[List[str]] = None
 ):
     """
-    Adiciona documentos com embeddings opcionais
+    Adiciona documentos na collection.
+    Sempre usar embeddings vindos do mesmo modelo (text-embedding-004).
     """
     n = len(documents)
     metadatas = metadatas or [{} for _ in range(n)]
@@ -35,11 +41,14 @@ def add_documents(
     )
 
 
-def query_documents(query: str, n_results: int = 4):
+def query_by_embedding(embedding: List[float], n_results: int = 4):
     """
-    Busca top-N documentos relevantes via similaridade
+    Faz busca no Chroma usando um embedding já calculado.
+    Esse embedding deve ser do mesmo modelo usado nos documentos.
     """
     return collection.query(
-        query_texts=[query],
+        query_embeddings=[embedding],
         n_results=n_results
     )
+
+# (query_documents via query_texts fica de lado agora. Se quiser, pode até remover.)
