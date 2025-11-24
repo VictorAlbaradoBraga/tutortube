@@ -13,6 +13,7 @@ class RagQueryRequest(BaseModel):
     question: str
     topic: Optional[str] = None  # pode ser o mesmo do estudo, se quiser agrupar
     language: Optional[str] = "pt-BR"
+    conversation_context: Optional[str] = ""  # Novo campo
 
 
 class IngestRequest(BaseModel):

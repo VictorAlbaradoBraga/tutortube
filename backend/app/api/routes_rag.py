@@ -7,7 +7,6 @@ from app.services.rag_service import rag_query
 
 router = APIRouter(prefix="/rag", tags=["rag"])
 
-
 @router.post("/ask", response_model=RagQueryResponse)
 async def ask_rag(payload: RagQueryRequest):
     question = payload.question.strip()
@@ -15,10 +14,12 @@ async def ask_rag(payload: RagQueryRequest):
     if not question:
         raise HTTPException(status_code=400, detail="Pergunta não pode ser vazia.")
 
-    # Se seu rag_query aceitar topic/language, pode fazer:
-    # result = await rag_query(question, topic=payload.topic, language=payload.language)
-    # Mas se a assinatura atual for só rag_query(question), isso aqui funciona:
-    result = await rag_query(question)
+    # Passando o conversation_context para a função rag_query
+    result = await rag_query(
+        question, 
+        topic=payload.topic, 
+        conversation_context=payload.conversation_context  # Passando o contexto
+    )
 
     answer = result["answer"]
     sources_raw = result.get("sources", [])
@@ -27,7 +28,6 @@ async def ask_rag(payload: RagQueryRequest):
         RagSource(
             id=s["id"],
             score=s.get("score", 0.0),
-            # aceita tanto "preview" quanto "snippet" para evitar erro
             preview=s.get("preview") or s.get("snippet", ""),
             metadata=s.get("metadata", {})
         )

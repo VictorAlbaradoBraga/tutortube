@@ -10,7 +10,8 @@ from app.utils.google_client import gemini_chat
 async def rag_query(
     question: str,
     topic: Optional[str] = None,
-    language: str = "pt-BR"
+    language: str = "pt-BR",
+    conversation_context: Optional[str] = ""  # Aceitar o parâmetro conversation_context
 ) -> Dict[str, Any]:
     """
     Faz uma consulta RAG:
@@ -54,6 +55,9 @@ async def rag_query(
 
     lang_label = "português do Brasil" if language.startswith("pt") else "inglês"
 
+    # Agora incluímos o conversation_context no prompt, se existir
+    full_context = f"{conversation_context}\n\n{context}" if conversation_context else context
+
     prompt = f"""
 Você é um tutor especializado em explicar conteúdos de forma clara e objetiva.
 
@@ -67,9 +71,10 @@ Se a resposta não estiver clara no contexto, seja honesto e diga que não encon
 mas dê uma explicação geral segura sobre o tema.
 
 Contexto:
-\"\"\"{context}\"\"\"
+\"\"\"{full_context}\"\"\"  # Passando o contexto completo, que inclui o conversation_context
 """.strip()
 
+    # Chamando a função do Google para processar o prompt
     answer = await gemini_chat(prompt)
 
     return {
