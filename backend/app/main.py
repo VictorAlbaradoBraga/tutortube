@@ -18,7 +18,7 @@ def create_app() -> FastAPI:
     # CORS básico (ajusta depois pros domínios da Vercel)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+         allow_origins=["https://tutortube-front.vercel.app"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
